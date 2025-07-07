@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Details - Gram Stain Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/details.css">
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <div class="section-header">
+                <div class="title-with-logo">
+                    <h1 class="section-title">Slide Details</h1>
+                </div>
+                <button class="print-btn" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+            <div class="divider"></div>
+            
+            <div class="slide-details">
+                <div class="slide-info">
+                    <div class="info-item">
+                        <div class="info-label">Slide ID</div>
+                        <div class="info-value">{{ slide['id_slide'] }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Patient Name</div>
+                        <div class="info-value">{{ slide['name_patient'] }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Date Created</div>
+                        <div class="info-value">{{ slide['date_created'] }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Result</div>
+                        <div class="info-value {% if slide['result'] == 'Gram-positive' %}positive{% else %}negative{% endif %}">
+                            {{ slide['result'] }}
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Confidence</div>
+                        <div class="info-value">{{ "%.2f"|format(slide['confidence'] * 100) }}%</div>
+                    </div>
+                </div>
+                
+                <div class="slide-image-container">
+                   {% set filename = slide['image_path'].split('\\')[-1] if '\\' in slide['image_path'] else slide['image_path'].split('/')[-1] %}
+                    <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Gram stain image" class="slide-image">
+                </div>
+            </div>
+            
+            <div class="actions">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="javascript:void(0);" onclick="openFindSlideModal()" class="btn btn-secondary">
+                    <i class="fas fa-search"></i> Find Another Slide
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add a print optimization script
+        window.onbeforeprint = function() {
+            // Ensure image is loaded before printing
+            const slideImage = document.querySelector('.slide-image');
+            if (slideImage) {
+                slideImage.onload = function() {
+                    // Image is fully loaded, ready to print
+                };
+            }
+        };
+        
+        function openFindSlideModal() {
+            window.location.href = "{{ url_for('index') }}";
+        }
+    </script>
+</body>
+</html>

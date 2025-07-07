@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gram Stain Analysis System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/popup.css">
+</head>
+<body>
+    <!-- Patient Information Popup Modal -->
+    <div id="patientModal" class="patient-modal-overlay">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2><i class="fas fa-user"></i> Add Patient Information</h2>
+                <p>Please add patient information before proceeding with analysis. This helps maintain proper records and traceability.</p>
+            </div>
+            
+            <form id="patientModalForm">
+                <div class="patient-form-group">
+                    <label for="popup_id_slide">Slide ID</label>
+                    <input type="text" id="popup_id_slide" name="id_slide" class="patient-form-control" placeholder="Auto-generated ID">
+                    <small>Leave blank for auto-generation</small>
+                </div>
+                
+                <div class="patient-form-group">
+                    <label for="popup_name_patient">Patient Name *</label>
+                    <input type="text" id="popup_name_patient" name="name_patient" class="patient-form-control" required placeholder="Enter patient name">
+                </div>
+                
+                <div class="patient-modal-actions">
+                    <button type="button" class="patient-btn patient-btn-secondary" onclick="skipPatientInfoPopup()">Skip for Now</button>
+                    <button type="submit" class="patient-btn patient-btn-primary">Save & Continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Find Slide Popup Modal -->
+    <div id="findSlideModal" class="patient-modal-overlay hidden">
+        <div class="patient-modal-content">
+            <div class="patient-modal-header">
+                <h2><i class="fas fa-search"></i> Find Slide</h2>
+                <p>Search for existing slides by ID or patient name.</p>
+            </div>
+            
+            <div class="patient-tabs">
+                <div class="patient-tab active" data-tab="id-search">Search by ID</div>
+                <div class="patient-tab" data-tab="name-search">Search by Name</div>
+            </div>
+            
+            <!-- ID Search Form -->
+            <form id="idSearchForm" class="patient-tab-content active">
+                <div class="patient-form-group">
+                    <label for="search_id_slide">Slide ID</label>
+                    <input type="text" id="search_id_slide" name="id_slide" class="patient-form-control" required placeholder="Enter slide ID to search">
+                </div>
+                
+                <div class="patient-modal-actions">
+                    <button type="button" class="patient-btn patient-btn-secondary" onclick="hideModal('findSlideModal')">Cancel</button>
+                    <button type="submit" class="patient-btn patient-btn-primary">Find Slide</button>
+                </div>
+            </form>
+            
+            <!-- Name Search Form -->
+            <form id="nameSearchForm" class="patient-tab-content hidden">
+                <div class="patient-form-group">
+                    <label for="search_name_patient">Patient Name</label>
+                    <input type="text" id="search_name_patient" name="name_patient" class="patient-form-control" required placeholder="Enter patient name to search">
+                </div>
+                
+                <div class="patient-modal-actions">
+                    <button type="button" class="patient-btn patient-btn-secondary" onclick="hideModal('findSlideModal')">Cancel</button>
+                    <button type="submit" class="patient-btn patient-btn-primary">Find Slides</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- Left Panel - Profile/Upload/Analysis -->
+    <div class="panel">
+        <div class="section">
+            <div class="section-header">
+                <div class="title-with-logo">
+                    <h1 class="section-title">
+                    Gram Stain AI
+                    </h1>
+
+                </div>
+            </div>
+            <div class="divider"></div>
+            
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <!-- Navigation Menu -->
+            <div class="nav-menu">
+                <a href="javascript:void(0);" onclick="reopenPatientModal()" class="nav-link">
+                    <i class="fas fa-plus"></i> Add Patient Info
+                </a>
+                <a href="javascript:void(0);" onclick="openFindSlideModal()" class="nav-link">
+                    <i class="fas fa-search"></i> Find Slide
+                </a>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="upload">New Analysis</div>
+                <div class="tab" data-tab="history">Past Results</div>
+            </div>
+            
+            <div class="tab-content active" id="upload-tab">
+                <div class="upload-options">
+                    <div class="upload-card" onclick="openCamera()">
+                        <i class="fas fa-camera upload-icon"></i>
+                        <span class="upload-label">Capture Image</span>
+                    </div>
+                    <div class="upload-card" onclick="openFileUpload()">
+                        <i class="fas fa-file-upload upload-icon"></i>
+                        <span class="upload-label">Upload Image</span>
+                    </div>
+                </div>
+                
+                <!-- Camera error message -->
+                <div id="cameraErrorMessage" class="error-message" style="display: none;">
+                    <p><strong>Camera access issue:</strong> <span id="cameraErrorText"></span></p>
+                    <p class="mt-2">Troubleshooting tips:</p>
+                    <ul>
+                        <li>Ensure your browser has permission to access the camera</li>
+                        <li>Check that no other application is using the camera</li>
+                        <li>Try using a different browser (Chrome or Firefox recommended)</li>
+                        <li>On mobile devices, ensure you're using HTTPS</li>
+                    </ul>
+                </div>
+                
+                <!-- Image Preview and Analysis Controls -->
+                <div class="image-preview-container" id="previewContainer">
+                    <div class="section-header">
+                        <h3 class="section-title">Sample Preview</h3>
+                    </div>
+                    <img id="imagePreview" class="image-preview" src="#" alt="Gram stain preview">
+                    
+                    <div class="analysis-controls">
+                        <button id="analyzeBtn" class="analysis-btn" onclick="analyzeSample()" disabled>
+                            <i class="fas fa-microscope"></i> Analyze Sample
+                        </button>
+                        <button class="analysis-btn" onclick="resetSample()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                    
+                    <div class="loading" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        <p>Analyzing gram stain sample...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="history-tab">
+                <div class="past-results">
+                    <div class="section-header">
+                        <h3 class="section-title">Past Analyses</h3>
+                        <button class="print-btn" onclick="refreshPastResults()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="past-results-list" id="pastResultsList">
+                        <!-- Past results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Panel - Results -->
+    <div class="panel">
+        <div class="results-container">
+            <div class="results-header">
+                <h2 class="section-title">Analysis Results</h2>
+                <button class="print-btn" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Results
+                </button>
+            </div>
+            <div class="divider"></div>
+               <!-- Patient Info Display Banner -->
+    <div id="patientInfoBanner" class="patient-info-banner" style="display: none;">
+        <div class="patient-info-content">
+            <div><i class="fas fa-check-circle"></i> Current Patient Information</div>
+            <div class="patient-details">
+                <span><strong>Slide ID:</strong> <span id="currentSlideId">-</span></span>
+                <span><strong>Patient:</strong> <span id="currentPatientName">-</span></span>
+            </div>
+        </div>
+        <button type="button" class="patient-btn patient-btn-sm" onclick="reopenPatientModal()">
+            <i class="fas fa-edit"></i> Edit
+        </button>
+    </div>
+            <div class="results-content" id="resultsContent">
+                <div class="result-item">
+                    <div class="result-label">Sample Status</div>
+                    <div class="result-value">No sample loaded</div>
+                </div>
+                
+                <!-- Current slide info will be displayed here if available -->
+                {% if session.get('current_slide') %}
+                <div class="result-item">
+                    <div class="result-label">Slide ID</div>
+                    <div class="result-value">{{ session['current_slide']['id_slide'] }}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Patient Name</div>
+                    <div class="result-value">{{ session['current_slide']['name_patient'] }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden file upload form -->
+    <form id="uploadForm" action="/upload_file" method="post" enctype="multipart/form-data" style="display: none;">
+        <input type="file" id="fileInput" name="file" accept="image/*">
+    </form>
+    
+    <!-- Session data for popup -->
+    {% if session.get('current_slide') %}
+    <div id="sessionData" 
+         data-slide-id="{{ session['current_slide']['id_slide'] }}" 
+         data-patient-name="{{ session['current_slide']['name_patient'] }}" 
+         style="display: none;"></div>
+    {% endif %}
+    
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/popup.js"></script>
+</body>
+</html>

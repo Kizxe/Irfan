@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Slide Information - Gram Stain Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/forms.css">
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <div class="section-header">
+                <div class="title-with-logo">
+                    <h1 class="section-title">Add Slide Information</h1>
+                </div>
+            </div>
+            <div class="divider"></div>
+            
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <form action="{{ url_for('add_slide') }}" method="post">
+                <div class="form-group">
+                    <label for="id_slide" class="form-label">Slide ID</label>
+                    <input type="text" id="id_slide" name="id_slide" class="form-control" value="{{ suggested_id }}" placeholder="Enter slide ID or leave for auto-generation">
+                    <small>Leave blank for auto-generation</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name_patient" class="form-label">Patient Name</label>
+                    <input type="text" id="name_patient" name="name_patient" class="form-control" required placeholder="Enter patient name">
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i> Save and Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

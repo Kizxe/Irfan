@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - Gram Stain Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/details.css">
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <div class="section-header">
+                <div class="title-with-logo">
+                    <img src="/Desktop/again1/public/images/GS ai.png" alt="GS AI Logo" class="app-logo">
+                    <h1 class="section-title">Analysis Results</h1>
+                </div>
+                <button class="print-btn" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Results
+                </button>
+            </div>
+            <div class="divider"></div>
+            
+            <div class="result-details">
+                <div class="result-info">
+                    <div class="info-item">
+                        <div class="info-label">Sample ID</div>
+                        <div class="info-value">{{ sample_id }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Upload Date</div>
+                        <div class="info-value">{{ upload_date }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Analysis Date</div>
+                        <div class="info-value">{{ analysis_date }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Gram Type</div>
+                        <div class="info-value {% if gram_type == 'Gram-positive' %}positive{% else %}negative{% endif %}">
+                            {{ gram_type }}
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Confidence</div>
+                        <div class="info-value">{{ confidence }}</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: {{ confidence_numeric }}%"></div>
+                        </div>
+                    </div>
+                    
+                    {% if morphology %}
+                    <div class="info-item">
+                        <div class="info-label">Morphology</div>
+                        <div class="info-value">{{ morphology }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if arrangement %}
+                    <div class="info-item">
+                        <div class="info-label">Arrangement</div>
+                        <div class="info-value">{{ arrangement }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="result-image-container">
+                    <img src="{{ image_path }}" alt="Gram stain image" class="result-image">
+                </div>
+            </div>
+            
+            <div class="actions">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="{{ url_for('add_slide') }}" class="btn">
+                    <i class="fas fa-plus"></i> Add to Patient Record
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

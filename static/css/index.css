@@ -1,0 +1,348 @@
+/* Layout for main interface */
+body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Upload options */
+.upload-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.upload-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    min-height: 120px;
+}
+
+.upload-card:hover {
+    border-color: var(--primary-color);
+    background-color: #f8fafc;
+}
+
+.upload-icon {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    transition: color 0.2s;
+}
+
+.upload-card:hover .upload-icon {
+    color: var(--primary-color);
+}
+
+.upload-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+/* Image preview */
+.image-preview-container {
+    display: none;
+    margin-top: 20px;
+}
+
+.image-preview {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 16px;
+}
+
+/* Analysis controls */
+.analysis-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.analysis-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.analysis-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.analysis-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Loading indicator */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 12px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Results panel */
+.results-container {
+    padding: 24px;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Removed empty .results-content ruleset */
+.results-content > *:not(:last-child) {
+    margin-bottom: 12px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.result-value {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.result-value.positive {
+    color: var(--success-color);
+}
+
+.result-value.negative {
+    color: var(--error-color);
+}
+
+.timestamp {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+/* Removed empty .past-results-list ruleset */
+.past-results-list > *:not(:last-child) {
+    margin-bottom: 12px;
+}
+/* spacing handled by .past-results-list > *:not(:last-child) */
+
+.past-result-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.past-result-card:hover {
+    border-color: var(--primary-color);
+    background-color: #f8fafc;
+}
+
+.past-result-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.past-result-info {
+    flex: 1;
+}
+
+.past-result-title {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.past-result-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.past-result-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-positive {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.badge-negative {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.past-result-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.past-result-btn {
+    padding: 6px 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.past-result-btn:hover {
+    background: var(--background-color);
+    color: var(--text-primary);
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: var(--border-color);
+    margin-bottom: 16px;
+}
+
+/* Error message */
+.error-message {
+    background-color: #fef2f2;
+    border: 1px solid var(--error-color);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin: 16px 0;
+    color: #dc2626;
+}
+
+.error-message ul {
+    margin-top: 8px;
+    padding-left: 20px;
+}
+
+.error-message li {
+    margin-bottom: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    body {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .upload-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .analysis-controls {
+        flex-direction: column;
+    }
+    
+    .past-result-meta {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

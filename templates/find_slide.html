@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Slide - Gram Stain Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/forms.css">
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <div class="section-header">
+                <div class="title-with-logo">
+                    <h1 class="section-title">Find Slide</h1>
+                </div>
+            </div>
+            <div class="divider"></div>
+            
+            <!-- Search Tabs -->
+            <div class="search-tabs">
+                <div class="tab active" data-tab="id-search">Search by ID</div>
+                <div class="tab" data-tab="name-search">Search by Patient Name</div>
+            </div>
+            
+            <!-- ID Search Form -->
+            <div id="id-search-tab" class="tab-content active">
+                <form action="{{ url_for('find_slide') }}" method="post">
+                    <input type="hidden" name="search_type" value="id">
+                    <div class="form-group">
+                        <label for="id_slide" class="form-label">Slide ID</label>
+                        <input type="text" id="id_slide" name="id_slide" class="form-control" required placeholder="Enter slide ID to search">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-search"></i> Find Slide
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Name Search Form -->
+            <div id="name-search-tab" class="tab-content">
+                <form action="{{ url_for('find_slide') }}" method="post">
+                    <input type="hidden" name="search_type" value="name">
+                    <div class="form-group">
+                        <label for="name_patient" class="form-label">Patient Name</label>
+                        <input type="text" id="name_patient" name="name_patient" class="form-control" required placeholder="Enter patient name to search">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-search"></i> Find Slides
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show the corresponding tab content
+                    const tabId = this.getAttribute('data-tab') + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
